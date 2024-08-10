@@ -4,6 +4,8 @@ services:
     command: "--default-authentication-plugin=mysql_native_password"
     volumes:
       - ${APP_DATA_DIR}/wordpress/db_data:/var/lib/mysql
+    networks:
+      - caddy
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=${USER_DEFINED_SERVICE_DEFAULT_PASSWORD}
