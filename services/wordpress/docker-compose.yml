@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mariadb:10.6.4-focal
+    command: "--default-authentication-plugin=mysql_native_password"
+    volumes:
+      - ${APP_DATA_DIR}/wordpress/db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${USER_DEFINED_SERVICE_DEFAULT_PASSWORD}
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=${USER_DEFINED_SERVICE_DEFAULT_PASSWORD}
+    expose:
+      - 3306
+      - 33060
+
+  wordpress:
+    image: wordpress:latest
+    volumes:
+      - ${APP_DATA_DIR}/wordpress/wp_data:/var/www/html
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=${USER_DEFINED_SERVICE_DEFAULT_PASSWORD}
+      - WORDPRESS_DB_NAME=wordpress
+
+    labels:
+      caddy: notes.selfhosted.bharatkalluri.com
+      caddy.reverse_proxy: "{{upstreams 80}}"
+
+networks:
+  default:
+    external:
+      name: caddy
