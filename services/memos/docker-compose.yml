@@ -6,11 +6,11 @@ services:
     restart: on-failure
     stop_grace_period: 1m
     volumes:
-      - /citadel/appdata/memos:/var/opt/memos
+      - ${APP_DATA_DIR}/memos:/var/opt/memos
     networks:
       - caddy
     labels:
-      caddy: statping.selfhosted.bharatkalluri.com
+      caddy: memos.selfhosted.bharatkalluri.com
       caddy.reverse_proxy: "{{upstreams 5230}}"
 
 networks:

@@ -11,10 +11,10 @@ services:
       - caddy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /citadel/appdata/caddy:/data
+      - ${APP_DATA_DIR}/caddy:/data
     restart: unless-stopped
     labels:
-      caddy.email: bharatkalluri@protonmail.com
+      caddy.email: ${ADMIN_EMAIL}
 
 networks:
   caddy:
