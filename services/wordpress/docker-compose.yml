@@ -26,7 +26,7 @@ services:
       - WORDPRESS_DB_NAME=wordpress
 
     labels:
-      caddy: notes.selfhosted.bharatkalluri.com
+      caddy: notes.${BASE_DOMAIN}
       caddy.reverse_proxy: "{{upstreams 80}}"
 
 networks:
