@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    expose:
+      # TODO: check if this conflicts with wordpress and such services
+      - "80"
+    networks:
+      - caddy
+    environment:
+      # TODO: get this from .env
+      TZ: "Asia/Kolkata"
+      WEBPASSWORD: ${USER_DEFINED_SERVICE_DEFAULT_PASSWORD}
+      PIHOLE_DNS_1: 8.8.8.8
+      PIHOLE_DNS_2: 8.8.4.4
+      ServerIP: 45.91.168.228
+    volumes:
+      - "${APP_DATA_DIR}/pihole/etc-pihole:/etc/pihole"
+      - "${APP_DATA_DIR}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d"
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    labels:
+      caddy: pihole.${BASE_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    dns:
+      - 127.0.0.1
+
+networks:
+  caddy:
+    external: true
