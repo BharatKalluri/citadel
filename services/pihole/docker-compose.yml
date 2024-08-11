@@ -8,9 +8,6 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       - "67:67/udp"
-    expose:
-      # TODO: check if this conflicts with wordpress and such services
-      - "80"
     networks:
       - caddy
     environment:
