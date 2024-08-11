@@ -12,7 +12,7 @@ services:
       - caddy
     environment:
       # TODO: get this from .env
-      TZ: "Asia/Kolkata"
+      TZ: ${TZ}
       WEBPASSWORD: ${USER_DEFINED_SERVICE_DEFAULT_PASSWORD}
       PIHOLE_DNS_1: 8.8.8.8
       PIHOLE_DNS_2: 8.8.4.4
