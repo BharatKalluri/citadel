@@ -5,7 +5,10 @@ for app in $(ls $CITADEL_ROOT_DIR/installed_apps); do
     docker compose down
 done
 
-echo "will run backup"
+# create backup directory if it doesn't exist
+if [ ! -d "$CITADEL_ROOT_DIR/backup" ]; then
+    mkdir "$CITADEL_ROOT_DIR/backup"
+fi
 
 # restart all installed_apps
 for app in $(ls $CITADEL_ROOT_DIR/installed_apps); do
