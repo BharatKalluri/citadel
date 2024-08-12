@@ -1,5 +1,3 @@
-version: "2.3"
-
 services:
   memos:
     image: neosmemo/memos:0.22.4@sha256:b17a43b084327a8e37121fc3cce67a0a43b8a3ad75f9e9fa51c3f5b5ace290b4
