@@ -14,12 +14,6 @@ if [ ! -d "$CITADEL_ROOT_DIR/backup" ]; then
     mkdir "$CITADEL_ROOT_DIR/backup"
 fi
 
-# install borgmatic if not installed using apt
-if ! command -v borgmatic &>/dev/null; then
-    echo "borgmatic not found, installing..."
-    sudo apt-get install -y borgmatic
-fi
-
 # use tar to zip root directory excluding backup directory and .git directory
 tar -czf "$CITADEL_ROOT_DIR/backup/backup-$(date +%Y-%m-%d-%H-%M-%S).tar.gz" --exclude="$CITADEL_ROOT_DIR/backup" --exclude="$CITADEL_ROOT_DIR/.git" "$CITADEL_ROOT_DIR"
 
