@@ -4,6 +4,7 @@ set -e
 
 # verify if docker network caddy exists, if not create
 if [ -z "$(docker network ls --filter name=caddy -q)" ]; then
+    echo "Creating docker network since it does not exist: caddy"
     docker network create caddy
 fi
 
