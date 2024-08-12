@@ -10,6 +10,7 @@ fi
 
 # docker compose down if the app is running
 cd "$CITADEL_ROOT_DIR/installed_apps/$1"
+
 docker compose down
 
 # remove the app from installed_apps

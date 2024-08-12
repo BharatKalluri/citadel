@@ -9,17 +9,17 @@ if [ -z "$(docker network ls --filter name=caddy -q)" ]; then
 fi
 
 # verify that the app exists in the app store
-if [ ! -d "$CITADEL_ROOT_DIR/app_store/$1" ]; then
+if [ ! -d "$APP_STORE_DIR/$1" ]; then
     echo "App $1 not found in app store!"
     exit 1
 fi
 
 # create installed_apps directory if it doesn't exist
-if [ ! -d "$CITADEL_ROOT_DIR/installed_apps" ]; then
-    mkdir "$CITADEL_ROOT_DIR/installed_apps"
+if [ ! -d "$INSTALLED_APPS_DIR" ]; then
+    mkdir "$INSTALLED_APPS_DIR"
 fi
 
-cp -r "$CITADEL_ROOT_DIR/app_store/$1" "$CITADEL_ROOT_DIR/installed_apps/$1"
-cd "$CITADEL_ROOT_DIR/installed_apps/$1"
+cp -r "$APP_STORE_DIR/$1" "$INSTALLED_APPS_DIR/$1"
+cd "$INSTALLED_APPS_DIR/$1"
 docker compose up -d
 echo "Installed $1!"
