@@ -8,6 +8,11 @@ if [ ! -d "$CITADEL_ROOT_DIR/app_store/$1" ]; then
     exit 1
 fi
 
+# create installed_apps directory if it doesn't exist
+if [ ! -d "$CITADEL_ROOT_DIR/installed_apps" ]; then
+    mkdir "$CITADEL_ROOT_DIR/installed_apps"
+fi
+
 cp -r "$CITADEL_ROOT_DIR/app_store/$1" "$CITADEL_ROOT_DIR/installed_apps/$1"
 cd "$CITADEL_ROOT_DIR/installed_apps/$1"
 docker compose up -d
