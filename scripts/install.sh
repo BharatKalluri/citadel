@@ -2,6 +2,11 @@
 
 set -e
 
+# verify if docker network caddy exists, if not create
+if [ -z "$(docker network ls --filter name=caddy -q)" ]; then
+    docker network create caddy
+fi
+
 # verify that the app exists in the app store
 if [ ! -d "$CITADEL_ROOT_DIR/app_store/$1" ]; then
     echo "App $1 not found in app store!"
