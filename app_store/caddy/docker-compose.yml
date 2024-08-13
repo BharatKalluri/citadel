@@ -1,6 +1,7 @@
 services:
   caddy:
     image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    # caddy cannot run at user level since it binds to 80 & 443
     ports:
       - 80:80
       - 443:443
