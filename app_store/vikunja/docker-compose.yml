@@ -1,8 +1,8 @@
 services:
   vikunja:
     image: vikunja/vikunja
+    user: 1000:1000
     environment:
-      # VIKUNJA_SERVICE_JWTSECRET: <a super secure random secret>
       VIKUNJA_SERVICE_PUBLICURL: https://vikunja.${BASE_DOMAIN}/
       VIKUNJA_DATABASE_PATH: /db/vikunja.db
     volumes:
