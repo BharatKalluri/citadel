@@ -29,5 +29,5 @@ if [ -d "$INSTALLED_APPS_DIR/$1/app_data" ]; then
     chown -R 1000:1000 $APP_DATA_DIR/$1
 fi
 
-docker compose -f "$INSTALLED_APPS_DIR/$1/docker-compose.yaml" up -d
+docker compose -f "$INSTALLED_APPS_DIR/$1/docker-compose.yml" up -d
 echo "Installed $1!"
