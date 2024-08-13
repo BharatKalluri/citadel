@@ -1,0 +1,19 @@
+services:
+  vikunja:
+    image: vikunja/vikunja
+    environment:
+      # VIKUNJA_SERVICE_JWTSECRET: <a super secure random secret>
+      VIKUNJA_SERVICE_PUBLICURL: https://vikunja.${BASE_DOMAIN}/
+      VIKUNJA_DATABASE_PATH: /db/vikunja.db
+    volumes:
+      - ${APP_DATA_DIR}/vikunja/files:/app/vikunja/files
+      - ${APP_DATA_DIR}/vikunja/db:/db
+    restart: unless-stopped
+    labels:
+      caddy: vikunja.${BASE_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 3456}}"
+
+networks:
+  default:
+    external:
+      name: caddy
