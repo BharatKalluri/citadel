@@ -21,8 +21,10 @@ fi
 
 cp -r "$APP_STORE_DIR/$1" "$INSTALLED_APPS_DIR/$1"
 
-# copy contents of app_data from installed apps into the $CITADEL_APP_DATA_DIR
-cp -r "$INSTALLED_APPS_DIR/$1/app_data" "$APP_DATA_DIR/$1"
+# copy contents of app_data from installed apps into the $CITADEL_APP_DATA_DIR if app_data exists in installed_apps
+if [ -d "$INSTALLED_APPS_DIR/$1/app_data" ]; then
+    cp -r "$INSTALLED_APPS_DIR/$1/app_data" "$APP_DATA_DIR/$1"
+fi
 
 cd "$INSTALLED_APPS_DIR/$1"
 
