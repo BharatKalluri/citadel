@@ -20,10 +20,14 @@ if [ ! -d "$INSTALLED_APPS_DIR" ]; then
 fi
 
 cp -r "$APP_STORE_DIR/$1" "$INSTALLED_APPS_DIR/$1"
-cd "$INSTALLED_APPS_DIR/$1"
 
-# change owner of the app data directory to 1000:1000
-chown -R 1000:1000 $APP_DATA_DIR/$1
+# copy contents of app_data from installed apps into the $CITADEL_APP_DATA_DIR if app_data exists in installed_apps
+if [ -d "$INSTALLED_APPS_DIR/$1/app_data" ]; then
+    cp -r "$INSTALLED_APPS_DIR/$1/app_data" "$APP_DATA_DIR/$1"
 
-docker compose up -d
+    # change owner of the app data directory to 1000:1000
+    chown -R 1000:1000 $APP_DATA_DIR/$1
+fi
+
+docker compose -f "$INSTALLED_APPS_DIR/$1/docker-compose.yml" up -d
 echo "Installed $1!"
