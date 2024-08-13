@@ -1,6 +1,7 @@
 services:
   db:
     image: mariadb:10.6.4-focal
+    user: 1000:1000
     command: "--default-authentication-plugin=mysql_native_password"
     volumes:
       - ${APP_DATA_DIR}/wordpress/db_data:/var/lib/mysql
@@ -16,6 +17,7 @@ services:
 
   wordpress:
     image: wordpress:latest
+    user: 1000:1000
     volumes:
       - ${APP_DATA_DIR}/wordpress/wp_data:/var/www/html
     restart: always

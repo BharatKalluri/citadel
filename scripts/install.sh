@@ -21,5 +21,9 @@ fi
 
 cp -r "$APP_STORE_DIR/$1" "$INSTALLED_APPS_DIR/$1"
 cd "$INSTALLED_APPS_DIR/$1"
+
+# change owner of the app data directory to 1000:1000
+chown -R 1000:1000 $APP_DATA_DIR/$1
+
 docker compose up -d
 echo "Installed $1!"
