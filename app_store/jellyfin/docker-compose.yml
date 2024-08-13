@@ -10,6 +10,7 @@ services:
       - ${APP_DATA_DIR}/jellyfin/data/config:/config
       - ${HOME}/storage:/storage
     ports:
+      # TODO: test if service auto discovery works
       # Service auto-discovery
       - 7359:7359/udp
     labels:
