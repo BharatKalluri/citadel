@@ -64,6 +64,9 @@ EOF
     fi
 
     source ~/.profile
+
+    # install caddy by running this script from this directory using pwd
+    $CITADEL_ROOT_DIR/scripts/citadel install caddy
     
     # TODO: Setup firewall rules
     echo "Setup complete!"
