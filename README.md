@@ -10,17 +10,12 @@ A passion project, for more details [read this post](https://notes.bharatkalluri
 
 - clone citadel to the home directory. ideally on a fresh install running root.
 ```sh
-git clone git@github.com:BharatKalluri/citadel.git ~/citadel
+git clone https://github.com/BharatKalluri/citadel.git ~/citadel
 ```
 
 - run the setup script. it will ask some questions & set citadel up. once done, source profile.
 ```sh
 ~/citadel/scripts/citadel setup
-```
-
-- start caddy, caddy is the reverse proxy of choice. once caddy is up & running, you are ready to install apps
-```sh
-citadel install caddy
 ```
 
 ## Usage
