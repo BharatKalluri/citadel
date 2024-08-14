@@ -4,14 +4,44 @@ A self hosted setup powered by docker compose & caddy.
 
 A passion project, for more details [read this post](https://notes.bharatkalluri.com/2024/08/08/the-self-hosting-dream/).
 
-## Setup instructions
+## Usage
+- clone citadel to the home directory ideally. setup some directories for storage
+```sh
+git clone git@github.com:BharatKalluri/citadel.git ~/citadel
+mkdir ~/storage/
+```
 
-- setup env file as per .env.sample
-- `source .env`, these env vars decide where the app data is placed and which email should be used to retrieve certificates
-- create a docker network called caddy. `docker network create caddy`
-- spin up servers using docker compose up command
+- copy .env.sample to .env and change values appropriately
+```sh
+cd ~/citadel
+cp .env.sample .env
+```
 
-make sure the domain being setup is pointing is set up to this IP. caddy requires root since it binds to 443 and 8080.
+- make sure your DNS has an A record for `*.citadel.<domainname>` set to point to the IP address of the machine. For example, I have an A record against `*.citadel.bharatkalluri.com` to point to the IP address of my machine.
+
+- start caddy, caddy is the reverse proxy of choice. once caddy is up & running, you are ready to install apps
+```sh
+~/citadel/scripts/install.sh caddy
+```
+
+### Installing apps
+- you are ready to start installing your apps of choice. For example, let's install a notes app like google keep called `memos`
+```sh
+~/citadel/scripts/install.sh memos
+```
+
+- navigate to `memos.citadel.<domain name>` & you should see a signup page!
+
+### Removing apps
+
+- To remove `memos`
+
+```sh
+~/citadel/scripts/remove.sh memos
+```
+
+This should delete the corresponding app data, remove the application from the server
+
 
 ## Vision
 
