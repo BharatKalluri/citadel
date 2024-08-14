@@ -13,15 +13,9 @@ A passion project, for more details [read this post](https://notes.bharatkalluri
 git clone git@github.com:BharatKalluri/citadel.git ~/citadel
 ```
 
-- install docker if you have'nt already
-```sh
-curl -fsSL https://get.docker.com | sh
-```
-
 - run the setup script. it will ask some questions & set citadel up. once done, source profile.
 ```sh
 ~/citadel/scripts/citadel setup
-source ~/.profile
 ```
 
 - start caddy, caddy is the reverse proxy of choice. once caddy is up & running, you are ready to install apps
