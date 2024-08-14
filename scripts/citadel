@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Function to setup environment
+setup() {
+    echo "Setting up Citadel..."
+
+    # exit if citadel is already setup
+    if [ -f ~/.citadel_env ]; then
+        echo "Citadel is already setup!"
+        exit 1
+    fi
+    
+    # Set CITADEL_ROOT_DIR
+    CITADEL_ROOT_DIR="$HOME/citadel"
+    
+    # Ask for and set environment variables
+    read -p "Enter ADMIN_EMAIL: " ADMIN_EMAIL
+    read -p "Enter BASE_DOMAIN: " BASE_DOMAIN
+    read -p "Enter USER_DEFINED_SERVICE_DEFAULT_PASSWORD: " USER_DEFINED_SERVICE_DEFAULT_PASSWORD
+    read -p "Enter TZ (default: Asia/Kolkata): " TZ
+    TZ=${TZ:-Asia/Kolkata}
+    
+    # Write to .citadel_env
+    cat << EOF > ~/.citadel_env
+export ADMIN_EMAIL="$ADMIN_EMAIL"
+export CITADEL_ROOT_DIR="$CITADEL_ROOT_DIR"
+
+export APP_DATA_DIR="$CITADEL_ROOT_DIR/app_data"
+export APP_STORE_DIR="$CITADEL_ROOT_DIR/app_store"
+export INSTALLED_APPS_DIR="$CITADEL_ROOT_DIR/installed_apps"
+
+export USER_DEFINED_SERVICE_DEFAULT_PASSWORD="$USER_DEFINED_SERVICE_DEFAULT_PASSWORD"
+export BASE_DOMAIN="$BASE_DOMAIN"
+export TZ="$TZ"
+export PATH=\$PATH:$CITADEL_ROOT_DIR/scripts
+EOF
+    
+    # Source the .citadel_env to make variables available immediately
+    source ~/.citadel_env
+    
+    # Add sourcing of .citadel_env to .profile if not already present
+    if ! grep -q "source ~/.citadel_env" ~/.profile; then
+        echo "source ~/.citadel_env" >> ~/.profile
+    fi
+    
+    # Create necessary directories
+    mkdir -p "$APP_DATA_DIR" "$APP_STORE_DIR" "$INSTALLED_APPS_DIR"
+    
+    # Create caddy network if it doesn't exist
+    if [ -z "$(docker network ls --filter name=caddy -q)" ]; then
+        echo "Creating docker network: caddy"
+        docker network create caddy
+    fi
+    
+    # TODO: Setup firewall rules
+    echo "Setup complete!"
+}
+
+# Function to install an app
+install() {
+    if [ -z "$1" ]; then
+        echo "Please provide an app name to install."
+        exit 1
+    fi
+
+    # verify if docker network caddy exists, if not create
+    if [ -z "$(docker network ls --filter name=caddy -q)" ]; then
+        echo "Creating docker network since it does not exist: caddy"
+        docker network create caddy
+    fi
+
+    # verify that the app exists in the app store
+    if [ ! -d "$APP_STORE_DIR/$1" ]; then
+        echo "App $1 not found in app store!"
+        exit 1
+    fi
+
+    cp -r "$APP_STORE_DIR/$1" "$INSTALLED_APPS_DIR/$1"
+
+    # copy contents of app_data from installed apps into the $CITADEL_APP_DATA_DIR if app_data exists in installed_apps
+    if [ -d "$INSTALLED_APPS_DIR/$1/app_data" ]; then
+        cp -r "$INSTALLED_APPS_DIR/$1/app_data" "$APP_DATA_DIR/$1"
+
+        # change owner of the app data directory to 1000:1000
+        chown -R 1000:1000 $APP_DATA_DIR/$1
+    fi
+
+    docker compose -f "$INSTALLED_APPS_DIR/$1/docker-compose.yml" up -d
+    echo "Installed $1!"
+}
+
+
+# Function to stop an app
+stop() {
+    if [ -z "$1" ]; then
+        echo "Please provide an app name to stop."
+        exit 1
+    fi
+
+    if [ ! -d "$INSTALLED_APPS_DIR/$1" ]; then
+        echo "App $1 not found in installed apps!"
+        exit 1
+    fi
+
+    cd "$INSTALLED_APPS_DIR/$1"
+    docker compose down
+    echo "Stopped $1!"
+}
+
+# Function to remove an app
+remove() {
+    if [ -z "$1" ]; then
+        echo "Please provide an app name to remove."
+        exit 1
+    fi
+
+    # verify the app exists in installed_apps
+    if [ ! -d "$INSTALLED_APPS_DIR/$1" ]; then
+        echo "App $1 not found in installed_apps!"
+        exit 1
+    fi
+
+    # docker compose down if the app is running
+    cd "$INSTALLED_APPS_DIR/$1"
+    docker compose down
+
+    # remove the app from installed_apps
+    rm -rf "$INSTALLED_APPS_DIR/$1"
+
+    # remove the app_data of the app if it exists
+    if [ -d "$APP_DATA_DIR/$1" ]; then
+        echo "Removing app_data of $1 at $APP_DATA_DIR/$1"
+        rm -rf "$APP_DATA_DIR/$1"
+    fi
+
+    echo "Removed $1!"
+}
+
+# Function to backup
+backup() {
+    echo "Backing up Citadel state..."
+    # TOOD: Implement backup logic here
+}
+
+# Function to list apps
+list() {
+    if [ "$1" == "--installed" ]; then
+        for app in $(ls $INSTALLED_APPS_DIR); do
+            echo $app
+        done
+    else
+        for app in $(ls $APP_STORE_DIR); do
+            echo $app
+        done
+    fi
+}
+
+# Main script logic
+case "$1" in
+    setup)
+        setup
+        ;;
+    install)
+        install "$2"
+        ;;
+    stop)
+        stop "$2"
+        ;;
+    remove)
+        remove "$2"
+        ;;
+    backup)
+        backup
+        ;;
+    list)
+        list "$2"
+        ;;
+    *)
+        echo "Usage: citadel [command] [options]"
+        echo "Commands:"
+        echo "  setup                    Set up Citadel environment"
+        echo "  install <app>            Install an app"
+        echo "  stop <app>               Stop a running app"
+        echo "  remove <app>             Remove an installed app"
+        echo "  backup                   Backup Citadel state"
+        echo "  list [--installed]       List available or installed apps"
+        exit 1
+        ;;
+esac
