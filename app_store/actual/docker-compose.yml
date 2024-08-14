@@ -1,0 +1,15 @@
+services:
+  actual:
+    image: docker.io/actualbudget/actual-server:latest
+    user: 1000:1000
+    volumes:
+      - ${APP_DATA_DIR}/actual/data:/data
+    restart: unless-stopped
+    labels:
+      caddy: actual.${BASE_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 5006}}"
+
+networks:
+  default:
+    external:
+      name: caddy
